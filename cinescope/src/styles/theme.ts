@@ -1,8 +1,8 @@
 export const theme = {
   colors: {
-    primary: "#E50914",
-    background: "#0F0F0F",
-    text: "#FFFFFF",
-    muted: "#9CA3AF",
+    background: "#0f172a",
+    primary: "#e50914",
+    text: "#ffffff",
+    muted: "#94a3b8",
   },
 };
