@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import Link from "next/link";
 import { fetchTrendingMovies } from "@/services/movieApi";
 import { Movie } from "@/types/movie";
 
-// Styled components
+// Styled Components
 const Container = styled.div`
   padding: 2rem;
   max-width: 1200px;
@@ -13,7 +14,6 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  color: #333;
 `;
 
 const Grid = styled.div`
@@ -22,15 +22,17 @@ const Grid = styled.div`
   gap: 1.5rem;
 `;
 
-const Card = styled.div`
-  background: #fff;
+const Card = styled.a`
+  display: block;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -41,28 +43,22 @@ const Poster = styled.img`
 `;
 
 const MovieInfo = styled.div`
-  padding: 0.8rem;
+  padding: 0.75rem;
 `;
 
 const MovieTitle = styled.h2`
   font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 0.3rem;
+  margin: 0 0 0.5rem 0;
 `;
 
 const ReleaseDate = styled.p`
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #777;
+  margin: 0;
 `;
 
-const Overview = styled.p`
-  font-size: 0.8rem;
-  color: #555;
-  margin-top: 0.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+const ErrorMessage = styled.p`
+  color: red;
 `;
 
 export default function Home() {
@@ -71,7 +67,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const getMovies = async () => {
       try {
         const data = await fetchTrendingMovies();
         setMovies(data.results);
@@ -82,32 +78,33 @@ export default function Home() {
       }
     };
 
-    fetchMovies();
+    getMovies();
   }, []);
 
   if (loading) return <Container>Loading movies...</Container>;
-  if (error) return <Container>{error}</Container>;
+  if (error) return <Container><ErrorMessage>{error}</ErrorMessage></Container>;
 
   return (
     <Container>
       <Title>Trending Movies</Title>
       <Grid>
         {movies.map((movie) => (
-          <Card key={movie.id}>
-            <Poster
-              src={
-                movie.poster_path
-                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                  : "/assets/images/logo.png" // fallback poster
-              }
-              alt={movie.title}
-            />
-            <MovieInfo>
-              <MovieTitle>{movie.title}</MovieTitle>
-              <ReleaseDate>{movie.release_date}</ReleaseDate>
-              <Overview>{movie.overview}</Overview>
-            </MovieInfo>
-          </Card>
+          <Link key={movie.id} href={`/movies/${movie.id}`} passHref>
+            <Card>
+              <Poster
+                src={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                    : "/assets/images/logo.png"
+                }
+                alt={movie.title}
+              />
+              <MovieInfo>
+                <MovieTitle>{movie.title}</MovieTitle>
+                <ReleaseDate>{movie.release_date}</ReleaseDate>
+              </MovieInfo>
+            </Card>
+          </Link>
         ))}
       </Grid>
     </Container>
