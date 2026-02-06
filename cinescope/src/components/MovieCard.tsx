@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Movie } from "@/types/movie";
+import { useRouter } from "next/router";
 
 interface MovieCardProps {
   movie: Movie;
@@ -46,11 +47,17 @@ const Button = styled.button`
 `;
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie, isFavorite, onToggleFavorite }) => {
+  const router = useRouter();
+
+  const handleClickCard = () => {
+    router.push(`/movie/${movie.imdbID}`);
+  };
+
   return (
     <Card>
-      <Poster src={movie.Poster} alt={movie.Title} />
+      <Poster src={movie.Poster} alt={movie.Title} onClick={handleClickCard} />
       <Info>
-        <Title>{movie.Title}</Title>
+        <Title onClick={handleClickCard}>{movie.Title}</Title>
         <p>{movie.Year}</p>
         <Button onClick={() => onToggleFavorite(movie)}>
           {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
