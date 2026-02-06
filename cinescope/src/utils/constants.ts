@@ -1,2 +1,3 @@
-export const TMDB_API_KEY = "YOUR_API_KEY"; // replace later
-export const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+export const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY as string;
+
+export const OMDB_BASE_URL = "https://www.omdbapi.com";

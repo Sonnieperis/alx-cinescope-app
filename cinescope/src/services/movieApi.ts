@@ -1,71 +1,41 @@
-import { Movie } from "@/types/movie";
+import { MovieResponse } from "@/types/movie";
+import { OMDB_API_KEY, OMDB_BASE_URL } from "./constants";
 
+const mockResponse: MovieResponse = {
+  results: [
+    {
+      id: "mock-1",
+      title: "Mock Movie",
+      year: "2024",
+      poster: "https://via.placeholder.com/300x450",
+    },
+  ],
+};
 
-const mockMovies: Movie[] = [
-  {
-    id: 1,
-    title: "The Matrix Resurrections",
-    poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-    overview: "The fourth installment in The Matrix series.",
-    release_date: "2021-12-22",
-    vote_average: 7.0,
-  },
-  {
-    id: 2,
-    title: "Spider-Man: No Way Home",
-    poster_path: "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-    overview: "Peter Parker's secret identity is revealed to the world.",
-    release_date: "2021-12-15",
-    vote_average: 8.4,
-  },
-  {
-    id: 3,
-    title: "Dune",
-    poster_path: "/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-    overview: "Paul Atreides leads his family to the desert planet Arrakis.",
-    release_date: "2021-10-22",
-    vote_average: 8.1,
-  },
-];
-
-// Simulate fetching trending movies
-export async function fetchTrendingMovies(): Promise<{ results: Movie[] }> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ results: mockMovies });
-    }, 500);
-  });
-}
-
-// Favorite movies stored in localStorage under 'favorites'
-const FAVORITES_KEY = "favorites";
-
-// Get favorites from localStorage
-export function getFavoriteMovies(): Movie[] {
-  if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(FAVORITES_KEY);
-  return stored ? JSON.parse(stored) : [];
-}
-
-// Add a movie to favorites
-export function addFavorite(movie: Movie) {
-  if (typeof window === "undefined") return;
-  const favorites = getFavoriteMovies();
-  if (!favorites.find((m) => m.id === movie.id)) {
-    favorites.push(movie);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+export async function fetchTrendingMovies(): Promise<MovieResponse> {
+  if (!OMDB_API_KEY) {
+    console.warn("OMDb API key missing — using mock data");
+    return new Promise((resolve) =>
+      setTimeout(() => resolve(mockResponse), 500)
+    );
   }
-}
 
-// Remove a movie from favorites
-export function removeFavorite(movieId: number) {
-  if (typeof window === "undefined") return;
-  let favorites = getFavoriteMovies();
-  favorites = favorites.filter((m) => m.id !== movieId);
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-}
+  const res = await fetch(
+    `${OMDB_BASE_URL}/?apikey=${OMDB_API_KEY}&s=movie&type=movie`
+  );
 
-// Check if a movie is in favorites
-export function isFavorite(movieId: number): boolean {
-  return getFavoriteMovies().some((m) => m.id === movieId);
+  if (!res.ok) {
+    throw new Error("Failed to fetch movies");
+  }
+
+  const data = await res.json();
+
+  return {
+    results: data.Search.map((movie: any) => ({
+      id: movie.imdbID,
+      title: movie.Title,
+      year: movie.Year,
+      poster: movie.Poster,
+    })),
+  };
 }
