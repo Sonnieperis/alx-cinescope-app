@@ -2,50 +2,48 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MovieCard from "@/components/MovieCard";
 import { Movie } from "@/types/movie";
-import { getFavorites, removeFavorite, isFavorite } from "@/services/movieApi";
+import {
+  getFavorites,
+  toggleFavorite,
+  fetchFavoriteMovies,
+} from "@/services/localStorage";
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
 `;
 
-const FavoritesPage = () => {
-  const [favorites, setFavorites] = useState<Movie[]>([]);
-
-  const reloadFavorites = () => {
-    setFavorites(getFavorites());
-  };
+export default function FavoritesPage() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    reloadFavorites();
+    setFavorites(getFavorites());
+    fetchFavoriteMovies().then(setMovies);
   }, []);
 
   const handleToggleFavorite = (movie: Movie) => {
-    if (isFavorite(movie)) {
-      removeFavorite(movie);
-    }
-    reloadFavorites();
+    toggleFavorite(movie);
+    setFavorites(getFavorites());
+    setMovies((prev) => prev.filter((m) => m.id !== movie.id));
   };
 
-  if (favorites.length === 0) return <p style={{ textAlign: "center", marginTop: "2rem" }}>No favorites yet!</p>;
+  if (movies.length === 0) {
+    return <p style={{ padding: "2rem" }}>No favorites yet!</p>;
+  }
 
   return (
-    <div>
-      <h1 style={{ textAlign: "center", marginTop: "1rem" }}>Your Favorites</h1>
-      <Grid>
-        {favorites.map((movie) => (
-          <MovieCard
-            key={movie.imdbID}
-            movie={movie}
-            isFavorite={isFavorite(movie)}
-            onToggleFavorite={handleToggleFavorite}
-          />
-        ))}
-      </Grid>
-    </div>
+    <Grid>
+      {movies.map((movie) => (
+        <MovieCard
+          key={movie.id}
+          movie={movie}
+          onToggleFavorite={handleToggleFavorite}
+          isFavorite={favorites.includes(movie.id)}
+        />
+      ))}
+    </Grid>
   );
-};
-
-export default FavoritesPage;
+}

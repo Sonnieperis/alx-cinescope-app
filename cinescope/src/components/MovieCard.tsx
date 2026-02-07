@@ -1,25 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { Movie } from "@/types/movie";
-import { useRouter } from "next/router";
-
-interface MovieCardProps {
-  movie: Movie;
-  isFavorite: boolean;
-  onToggleFavorite: (movie: Movie) => void;
-}
+import FavoriteButton from "./FavoriteButton";
 
 const Card = styled.div`
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s;
   &:hover {
-    transform: scale(1.03);
+    transform: translateY(-4px);
   }
 `;
 
@@ -34,34 +25,35 @@ const Info = styled.div`
 `;
 
 const Title = styled.h3`
-  margin: 0 0 0.5rem;
+  margin: 0;
+  font-size: 1.1rem;
 `;
 
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: ${(props) => (props.disabled ? "#ccc" : "#34967C")};
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+const Year = styled.p`
+  margin: 0.3rem 0;
+  color: #555;
 `;
 
-const MovieCard: React.FC<MovieCardProps> = ({ movie, isFavorite, onToggleFavorite }) => {
-  const router = useRouter();
+type MovieCardProps = {
+  movie: Movie;
+  onToggleFavorite: (movie: Movie) => void;
+  isFavorite: boolean;
+};
 
-  const handleClickCard = () => {
-    router.push(`/movie/${movie.imdbID}`);
-  };
-
+const MovieCard: React.FC<MovieCardProps> = ({ movie, onToggleFavorite, isFavorite }) => {
   return (
     <Card>
-      <Poster src={movie.Poster} alt={movie.Title} onClick={handleClickCard} />
+      <Poster
+        src={movie.poster || "/placeholder.png"}
+        alt={movie.title}
+      />
       <Info>
-        <Title onClick={handleClickCard}>{movie.Title}</Title>
-        <p>{movie.Year}</p>
-        <Button onClick={() => onToggleFavorite(movie)}>
-          {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-        </Button>
+        <Title>{movie.title}</Title>
+        <Year>{movie.year}</Year>
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onClick={() => onToggleFavorite(movie)}
+        />
       </Info>
     </Card>
   );
