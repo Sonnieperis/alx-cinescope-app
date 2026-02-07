@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MovieCard from "@/components/MovieCard";
 import { Movie } from "@/types/movie";
-import { fetchMovies } from "@/services/movieApi";
 import useFavorites from "@/hooks/useFavorites";
+import { fetchMoviesByIds } from "@/services/movieApi"; // helper to fetch movies by IDs
 import { GlobalStyles } from "@/styles/GlobalStyles";
 
 const Grid = styled.div`
@@ -13,24 +13,33 @@ const Grid = styled.div`
   padding: 2rem;
 `;
 
-export default function Home() {
+export default function FavoritesPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const { toggleFavorite, isFavorite } = useFavorites(movies);
+  const { toggleFavorite, favorites } = useFavorites(movies);
 
   useEffect(() => {
-    fetchMovies().then(setMovies);
-  }, []);
+    // fetch full movie data for all favorite IDs
+    if (favorites.length > 0) {
+      fetchMoviesByIds(favorites).then(setMovies);
+    } else {
+      setMovies([]);
+    }
+  }, [favorites]);
+
+  if (movies.length === 0) {
+    return <p style={{ padding: "2rem" }}>You have no favorite movies yet!</p>;
+  }
 
   return (
     <>
       <GlobalStyles />
-      <h1 style={{ padding: "1rem" }}>Cinescope Dashboard</h1>
+      <h1 style={{ padding: "1rem" }}>Your Favorites</h1>
       <Grid>
         {movies.map((movie) => (
           <MovieCard
             key={movie.imdbID}
             movie={movie}
-            isFavorite={isFavorite(movie)}
+            isFavorite={favorites.includes(movie.imdbID)}
             onToggleFavorite={toggleFavorite}
           />
         ))}
