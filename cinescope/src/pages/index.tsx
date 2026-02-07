@@ -19,6 +19,7 @@ export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const { toggleFavorite, isFavorite } = useFavorites(movies);
 
+  // Fetch movies from mock API
   useEffect(() => {
     async function loadMovies() {
       const data = await fetchMovies();

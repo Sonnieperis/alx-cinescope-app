@@ -3,7 +3,7 @@ import styled from "styled-components";
 import MovieCard from "@/components/MovieCard";
 import { Movie } from "@/types/movie";
 import useFavorites from "@/hooks/useFavorites";
-import { fetchMoviesByIds } from "@/services/movieApi"; // helper to fetch movies by IDs
+import { fetchMoviesByIds } from "@/services/movieApi"; 
 import { GlobalStyles } from "@/styles/GlobalStyles";
 
 const Grid = styled.div`
@@ -18,7 +18,7 @@ export default function FavoritesPage() {
   const { toggleFavorite, favorites } = useFavorites(movies);
 
   useEffect(() => {
-    // fetch full movie data for all favorite IDs
+    
     if (favorites.length > 0) {
       fetchMoviesByIds(favorites).then(setMovies);
     } else {
