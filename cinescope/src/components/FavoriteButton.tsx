@@ -1,14 +1,13 @@
 import styled from "styled-components";
 
-const Button = styled.button<{ active?: boolean }>`
-  padding: 0.5rem;
-  background-color: ${({ active }) => (active ? "#f44336" : "#34967C")};
-  color: white;
+const Button = styled.button<{ active: boolean }>`
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
-  width: 100%;
+  background: ${({ active }) => (active ? "#e63946" : "#e5e5e5")};
+  color: ${({ active }) => (active ? "#fff" : "#000")};
 
   &:hover {
     opacity: 0.9;
@@ -23,7 +22,7 @@ type Props = {
 export default function FavoriteButton({ isFavorite, onClick }: Props) {
   return (
     <Button active={isFavorite} onClick={onClick}>
-      {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+      {isFavorite ? "Remove ❤️" : "Add 🤍"}
     </Button>
   );
 }

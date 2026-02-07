@@ -20,13 +20,16 @@ export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    setFavorites(getFavorites());
+    const favs = getFavorites();
+    setFavorites(favs);
+
     fetchFavoriteMovies().then(setMovies);
   }, []);
 
   const handleToggleFavorite = (movie: Movie) => {
     toggleFavorite(movie);
-    setFavorites(getFavorites());
+    const updated = getFavorites();
+    setFavorites(updated);
     setMovies((prev) => prev.filter((m) => m.id !== movie.id));
   };
 
