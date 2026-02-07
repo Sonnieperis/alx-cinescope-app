@@ -1,41 +1,44 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchTrendingMovies } from "@/services/movieApi";
 import MovieCard from "@/components/MovieCard";
 import { Movie } from "@/types/movie";
-import { getFavorites, toggleFavorite } from "@/services/localStorage";
+import { fetchMovies } from "@/services/movieApi";
+import { GlobalStyles } from "@/styles/GlobalStyles";
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 2rem;
 `;
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]); // For now empty
 
   useEffect(() => {
-    fetchTrendingMovies().then(setMovies);
-    setFavorites(getFavorites());
+    fetchMovies().then(setMovies);
   }, []);
 
   const handleToggleFavorite = (movie: Movie) => {
-    toggleFavorite(movie);
-    setFavorites(getFavorites());
+    console.log("Toggling favorite for", movie.Title);
+    // We'll implement localStorage later
   };
 
   return (
-    <Grid>
-      {movies.map((movie) => (
-        <MovieCard
-          key={movie.id}
-          movie={movie}
-          onToggleFavorite={handleToggleFavorite}
-          isFavorite={favorites.includes(movie.id)}
-        />
-      ))}
-    </Grid>
+    <>
+      <GlobalStyles />
+      <h1 style={{ padding: "1rem" }}>Cinescope Dashboard</h1>
+      <Grid>
+        {movies.map((movie) => (
+          <MovieCard
+            key={movie.imdbID}
+            movie={movie}
+            isFavorite={favorites.includes(movie.imdbID)}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        ))}
+      </Grid>
+    </>
   );
 }

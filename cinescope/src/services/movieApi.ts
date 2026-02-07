@@ -1,64 +1,42 @@
-import { Movie, MovieResponse } from "@/types/movie";
+import { Movie, OMDbResponse } from "@/types/movie";
 import { OMDB_API_KEY, OMDB_BASE_URL } from "./constants";
 
-// MOCK response so the dashboard works immediately
-export const mockResponse: MovieResponse = {
-  Search: [
-    {
-      imdbID: "tt1234567",
-      Title: "The Shawshank Redemption",
-      Year: "1994",
-      Poster: "https://via.placeholder.com/300x450?text=Shawshank",
-    },
-    {
-      imdbID: "tt7654321",
-      Title: "Inception",
-      Year: "2010",
-      Poster: "https://via.placeholder.com/300x450?text=Inception",
-    },
-    {
-      imdbID: "tt2345678",
-      Title: "The Dark Knight",
-      Year: "2008",
-      Poster: "https://via.placeholder.com/300x450?text=Dark+Knight",
-    },
-  ],
-  totalResults: "3",
-  Response: "True",
-};
+const mockMovies: Movie[] = [
+  {
+    imdbID: "tt0372784",
+    Title: "Batman Begins",
+    Year: "2005",
+    Poster: "https://m.media-amazon.com/images/M/MV5BZmExZTU3Nzkt.jpg",
+  },
+  {
+    imdbID: "tt0468569",
+    Title: "The Dark Knight",
+    Year: "2008",
+    Poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0N15.jpg",
+  },
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxMV5.jpg",
+  },
+];
 
-const FAVORITES_KEY = "cinescope_favorites";
+export async function fetchMovies(search: string = "Batman"): Promise<Movie[]> {
+  try {
+    const res = await fetch(
+      `${OMDB_BASE_URL}?s=${encodeURIComponent(search)}&apikey=${OMDB_API_KEY}`
+    );
+    const data: OMDbResponse = await res.json();
 
-// Fetch trending movies (currently returns mock)
-export const fetchTrendingMovies = async (): Promise<Movie[]> => {
-  // You can replace this with real fetch later
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockResponse.Search), 500);
-  });
-};
-
-// Favorites storage
-export const getFavorites = (): Movie[] => {
-  const stored = localStorage.getItem(FAVORITES_KEY);
-  return stored ? JSON.parse(stored) : [];
-};
-
-export const addFavorite = (movie: Movie) => {
-  const current = getFavorites();
-  const exists = current.find((m) => m.imdbID === movie.imdbID);
-  if (!exists) {
-    current.push(movie);
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(current));
+    if (data.Response === "True" && data.Search) {
+      return data.Search;
+    } else {
+      console.warn("OMDb API failed, using mock movies", data.Error);
+      return mockMovies;
+    }
+  } catch (err) {
+    console.error("Fetch failed, using mock movies", err);
+    return mockMovies;
   }
-};
-
-export const removeFavorite = (movie: Movie) => {
-  const current = getFavorites();
-  const updated = current.filter((m) => m.imdbID !== movie.imdbID);
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
-};
-
-export const isFavorite = (movie: Movie): boolean => {
-  const current = getFavorites();
-  return current.some((m) => m.imdbID === movie.imdbID);
-};
+}

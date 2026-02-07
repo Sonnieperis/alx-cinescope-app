@@ -5,8 +5,9 @@ export interface Movie {
   Poster: string;
 }
 
-export interface MovieResponse {
+export interface OMDbResponse {
   Search: Movie[];
   totalResults: string;
-  Response: string;
+  Response: "True" | "False";
+  Error?: string;
 }

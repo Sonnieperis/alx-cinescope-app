@@ -1,22 +1,15 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyles = createGlobalStyle`
-  *, *::before, *::after {
-    box-sizing: border-box;
+  * {
+    margin: 0;
     padding: 0;
-    margin; 0;
+    box-sizing: border-box;
   }
 
   body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-      sans-serif;
-    background-color: #0f172a;
-    color: #ffffff;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f2f2;
+    color: #333;
   }
 `;

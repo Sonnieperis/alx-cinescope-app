@@ -1,62 +1,50 @@
-import React from "react";
 import styled from "styled-components";
 import { Movie } from "@/types/movie";
 import FavoriteButton from "./FavoriteButton";
 
 const Card = styled.div`
   background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-  &:hover {
-    transform: translateY(-4px);
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  img {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 0.5rem;
   }
 `;
 
-const Poster = styled.img`
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-`;
-
-const Info = styled.div`
-  padding: 1rem;
-`;
-
-const Title = styled.h3`
-  margin: 0;
-  font-size: 1.1rem;
-`;
-
-const Year = styled.p`
-  margin: 0.3rem 0;
-  color: #555;
-`;
-
-type MovieCardProps = {
+interface MovieCardProps {
   movie: Movie;
-  onToggleFavorite: (movie: Movie) => void;
   isFavorite: boolean;
-};
+  onToggleFavorite?: (movie: Movie) => void;
+}
 
-const MovieCard: React.FC<MovieCardProps> = ({ movie, onToggleFavorite, isFavorite }) => {
+export default function MovieCard({ movie, isFavorite, onToggleFavorite }: MovieCardProps) {
   return (
     <Card>
-      <Poster
-        src={movie.poster || "/placeholder.png"}
-        alt={movie.title}
-      />
-      <Info>
-        <Title>{movie.title}</Title>
-        <Year>{movie.year}</Year>
+      <img src={movie.Poster} alt={movie.Title} />
+      <h3>{movie.Title}</h3>
+      <p>{movie.Year}</p>
+      {onToggleFavorite && (
         <FavoriteButton
           isFavorite={isFavorite}
           onClick={() => onToggleFavorite(movie)}
         />
-      </Info>
+      )}
     </Card>
   );
-};
-
-export default MovieCard;
+}
