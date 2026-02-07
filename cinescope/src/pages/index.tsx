@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MovieCard from "@/components/MovieCard";
@@ -18,23 +20,31 @@ export default function Home() {
   const { toggleFavorite, isFavorite } = useFavorites(movies);
 
   useEffect(() => {
-    fetchMovies().then(setMovies);
+    async function loadMovies() {
+      const data = await fetchMovies();
+      setMovies(data);
+    }
+    loadMovies();
   }, []);
 
   return (
     <>
       <GlobalStyles />
       <h1 style={{ padding: "1rem" }}>Cinescope Dashboard</h1>
-      <Grid>
-        {movies.map((movie) => (
-          <MovieCard
-            key={movie.imdbID}
-            movie={movie}
-            isFavorite={isFavorite(movie)}
-            onToggleFavorite={toggleFavorite}
-          />
-        ))}
-      </Grid>
+      {movies.length === 0 ? (
+        <p style={{ padding: "2rem" }}>Loading movies...</p>
+      ) : (
+        <Grid>
+          {movies.map((movie) => (
+            <MovieCard
+              key={movie.imdbID}
+              movie={movie}
+              isFavorite={isFavorite(movie)}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))}
+        </Grid>
+      )}
     </>
   );
 }
