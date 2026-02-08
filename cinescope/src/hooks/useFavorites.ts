@@ -1,38 +1,40 @@
-// src/hooks/useFavorites.ts
-"use client";
+import { useEffect, useState } from "react";
+import { Movie } from "../types/movie";
 
-import { useState, useEffect, useCallback } from "react";
+const STORAGE_KEY = "favorites";
 
-const FAVORITES_KEY = "favorites";
+export function useFavorites() {
+  const [favorites, setFavorites] = useState<Movie[]>([]);
 
-export default function useFavorites() {
-  const [favorites, setFavorites] = useState<string[]>([]);
-
-  // Load favorites from localStorage on mount
+  // Load from localStorage safely
   useEffect(() => {
-    if (typeof window === "undefined") return; // ensure SSR safe
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    if (stored) setFavorites(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setFavorites(JSON.parse(stored));
+      }
+    } catch {
+      setFavorites([]);
+    }
   }, []);
 
-  // Save favorites to localStorage whenever it changes
+  // Persist changes
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
   }, [favorites]);
 
-  // Toggle favorite: add if not present, remove if present
-  const toggleFavorite = useCallback((imdbID: string) => {
+  const addFavorite = (movie: Movie) => {
     setFavorites((prev) =>
-      prev.includes(imdbID) ? prev.filter((id) => id !== imdbID) : [...prev, imdbID]
+      prev.some((m) => m.imdbID === movie.imdbID) ? prev : [...prev, movie]
     );
-  }, []);
+  };
 
-  // Check if a movie is favorite
-  const isFavorite = useCallback(
-    (imdbID: string) => favorites.includes(imdbID),
-    [favorites]
-  );
+  const removeFavorite = (imdbID: string) => {
+    setFavorites((prev) => prev.filter((m) => m.imdbID !== imdbID));
+  };
 
-  return { favorites, toggleFavorite, isFavorite };
+  const isFavorite = (imdbID: string) =>
+    favorites.some((m) => m.imdbID === imdbID);
+
+  return { favorites, addFavorite, removeFavorite, isFavorite };
 }

@@ -1,10 +1,11 @@
 export interface Movie {
-  imdbID: string;
   Title: string;
   Year: string;
+  imdbID: string;
+  Type: "movie" | "series" | "episode";
   Poster: string;
-  Type: string;
 }
+
 
 export interface MovieSearchResponse {
   Search: Movie[];
