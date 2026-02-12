@@ -1,20 +1,37 @@
-# 🎬 CineScope
+# 🎬 Cinescope
 
-CineScope is a movie discovery app that lets users browse trending movies, view details, and save favorites.
+Cinescope is a movie discovery web application built with **Next.js**, **TypeScript**, and the **OMDb API**.  
+Users can browse movies, view details, and add/remove favorites that persist using localStorage.
 
-## Tech Stack
-- Next.js
-- TypeScript
-- Styled Components
-- TMDB API
+---
 
-## Features
-- Trending movies dashboard
-- Dynamic movie detail pages
-- Save favorite movies
-- Responsive UI
+## 🚀 Live Demo
 
-## Getting Started
-```bash
-npm install
-npm run dev
+🔗 https://your-vercel-url.vercel.app
+
+---
+
+## 📌 Features
+
+- 🔎 Fetches real movie data from the OMDb API
+- 🎥 Displays movie posters, titles, and release years
+- ❤️ Add and remove movies from favorites
+- 💾 Favorites persist using localStorage
+- ⚡ Built with Next.js 16 and TypeScript
+- 🌐 Deployed on Vercel
+
+---
+
+## 🛠 Tech Stack
+
+- **Next.js**
+- **React**
+- **TypeScript**
+- **Styled Components**
+- **OMDb API**
+- **Vercel (Deployment)**
+
+---
+
+## 📂 Project Structure
+
