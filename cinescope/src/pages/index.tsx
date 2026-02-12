@@ -20,9 +20,14 @@ export default function Home() {
 
   useEffect(() => {
     async function loadMovies() {
-      const data = await fetchMovies();
-      setMovies(data);
-      setLoading(false);
+      try {
+        const data = await fetchMovies("batman");
+        setMovies(data);
+      } catch (error) {
+        console.error("Error loading movies:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadMovies();
@@ -32,7 +37,7 @@ export default function Home() {
     return <Page>Loading movies…</Page>;
   }
 
-  if (movies.length === 0) {
+  if (!movies || movies.length === 0) {
     return <Page>No movies found.</Page>;
   }
 

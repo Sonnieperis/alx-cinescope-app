@@ -1,30 +1,31 @@
-"use client";
-
 import Link from "next/link";
 import { Movie } from "../types/movie";
-import useFavorites from "../hooks/useFavorites";
+import { useFavorites } from "../hooks/useFavorites";
 
 interface Props {
   movie: Movie;
 }
 
 export default function MovieCard({ movie }: Props) {
-  const { favorites, toggleFavorite } = useFavorites();
-  const isFavorite = favorites.includes(movie.imdbID);
+  const { toggleFavorite, isFavorite } = useFavorites();
+
+  const favorite = isFavorite(movie.imdbID);
 
   return (
-    <div className="movie-card">
+    <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
       <Link href={`/movie/${movie.imdbID}`}>
         <img
-          src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.png"}
+          src={movie.Poster}
           alt={movie.Title}
+          style={{ width: "100%", cursor: "pointer" }}
         />
-        <h3>{movie.Title}</h3>
-        <p>{movie.Year}</p>
       </Link>
 
-      <button onClick={() => toggleFavorite(movie.imdbID)}>
-        {isFavorite ? "Remove Favorite" : "Add to Favorites"}
+      <h3>{movie.Title}</h3>
+      <p>{movie.Year}</p>
+
+      <button onClick={() => toggleFavorite(movie)}>
+        {favorite ? "Remove Favorite" : "Add to Favorites"}
       </button>
     </div>
   );

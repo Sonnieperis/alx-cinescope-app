@@ -6,35 +6,51 @@ const STORAGE_KEY = "favorites";
 export function useFavorites() {
   const [favorites, setFavorites] = useState<Movie[]>([]);
 
-  // Load from localStorage safely
+  // Load favorites from localStorage
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         setFavorites(JSON.parse(stored));
       }
-    } catch {
+    } catch (error) {
+      console.error("Failed to load favorites:", error);
       setFavorites([]);
     }
   }, []);
 
-  // Persist changes
+  // Save favorites to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    if (typeof window === "undefined") return;
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    } catch (error) {
+      console.error("Failed to save favorites:", error);
+    }
   }, [favorites]);
 
-  const addFavorite = (movie: Movie) => {
-    setFavorites((prev) =>
-      prev.some((m) => m.imdbID === movie.imdbID) ? prev : [...prev, movie]
-    );
+  const isFavorite = (imdbID: string) => {
+    return favorites.some((movie) => movie.imdbID === imdbID);
   };
 
-  const removeFavorite = (imdbID: string) => {
-    setFavorites((prev) => prev.filter((m) => m.imdbID !== imdbID));
+  const toggleFavorite = (movie: Movie) => {
+    setFavorites((prev) => {
+      const exists = prev.some((m) => m.imdbID === movie.imdbID);
+
+      if (exists) {
+        return prev.filter((m) => m.imdbID !== movie.imdbID);
+      } else {
+        return [...prev, movie];
+      }
+    });
   };
 
-  const isFavorite = (imdbID: string) =>
-    favorites.some((m) => m.imdbID === imdbID);
-
-  return { favorites, addFavorite, removeFavorite, isFavorite };
+  return {
+    favorites,
+    toggleFavorite,
+    isFavorite,
+  };
 }
